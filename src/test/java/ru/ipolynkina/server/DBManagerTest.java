@@ -4,6 +4,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.Assert;
+import ru.ipolynkina.server.db.DBManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

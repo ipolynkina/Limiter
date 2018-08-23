@@ -1,4 +1,4 @@
-package ru.ipolynkina.server;
+package ru.ipolynkina.server.db;
 
 import java.sql.*;
 
@@ -106,7 +106,7 @@ public class DBManager {
     }
 
     private void addDataProgram() throws SQLException {
-       executeUpdate("INSERT INTO program (name_program) VALUES('GraphsForSapHR')");
+        executeUpdate("INSERT INTO program (name_program) VALUES('GraphsForSapHR')");
         executeUpdate("INSERT INTO program (name_program) VALUES('PomidoroManager')");
         executeUpdate("INSERT INTO program (name_program) VALUES('SettingsGenerator')");
         executeUpdate("INSERT INTO program (name_program) VALUES('Converter')");
