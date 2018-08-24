@@ -28,17 +28,13 @@ public class DBManager {
                 createProgramTable();
                 createIsFreeTable();
                 createVersionTable();
+
+                addDataProgram();
+                addDataIsFree();
+                addDataVersion();
             } catch(SQLException exc) {
                 exc.printStackTrace();
             }
-        }
-
-        try {
-            addDataProgram();
-            addDataIsFree();
-            addDataVersion();
-        } catch(SQLException exc) {
-            exc.printStackTrace();
         }
     }
 

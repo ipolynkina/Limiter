@@ -1,6 +1,5 @@
 package ru.ipolynkina.server;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import ru.ipolynkina.server.db.DBController;
 import ru.ipolynkina.server.entity.ProgramEntity;
 
@@ -11,13 +10,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Iterator;
 
-
-public class RunnableHandler implements Runnable {
+public class ServerHandler implements Runnable {
 
     private Socket socket;
     private DBController dbController;
 
-    public RunnableHandler(Socket socket, DBController dbController) {
+    public ServerHandler(Socket socket, DBController dbController) {
         this.socket = socket;
         this.dbController = dbController;
     }

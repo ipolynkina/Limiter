@@ -18,7 +18,7 @@ public class Server {
         while(true) {
             try(ServerSocket server = new ServerSocket(4444)) {
                 Socket socket = server.accept();
-                Runnable runnable = new RunnableHandler(socket, dbController);
+                Runnable runnable = new ServerHandler(socket, dbController);
                 Thread thread = new Thread(runnable);
                 thread.start();
             } catch(IOException exc) {
