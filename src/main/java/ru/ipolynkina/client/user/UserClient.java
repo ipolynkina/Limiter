@@ -1,5 +1,8 @@
 package ru.ipolynkina.client.user;
 
+import org.json.JSONArray;
+import ru.ipolynkina.json.JSONRequest;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,11 +19,23 @@ public class UserClient {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-            out.println("user");
-            if(in.readLine().equals("input: program;version")) {
-                out.println("GraphsForSapHR;2");
-                System.out.println(in.readLine());
+            JSONRequest jsonRequest = new JSONRequest("user");
+            jsonRequest.addCommand("select");
+            jsonRequest.addProgram("GraphsForSapHR");
+            jsonRequest.addVersion("3");
+            out.println(jsonRequest);
+            out.println("end");
+
+            String builder = "";
+            String inputLine;
+            while(!(inputLine = in.readLine()).equals("end")) {
+                builder = builder.concat(inputLine);
             }
+            JSONArray array = new JSONArray(builder);
+
+            System.out.println("out: " + jsonRequest);
+            System.out.println("in: " + builder);
+            System.out.println("in is free: " + array.getJSONObject(0).getBoolean("isFree"));
 
             in.close();
             out.close();
