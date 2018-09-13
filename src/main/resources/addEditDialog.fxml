@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.collections.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
+<?import javafx.collections.FXCollections?>
 
 <AnchorPane prefHeight="220.0" prefWidth="411.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.ipolynkina.client.admin.dialogs.AddEditDialogController">
    <children>
       <Label layoutX="32.0" layoutY="14.0" prefHeight="35.0" prefWidth="161.0" text="Program Name" />
-      <Label layoutX="33.0" layoutY="53.0" prefHeight="35.0" prefWidth="161.0" text="Text Version" />
+      <Label layoutX="33.0" layoutY="53.0" prefHeight="35.0" prefWidth="161.0" text="Version Text" />
       <Label layoutX="33.0" layoutY="94.0" prefHeight="35.0" prefWidth="161.0" text="Is Free" />
-      <TextField layoutX="226.0" layoutY="14.0" prefHeight="35.0" prefWidth="161.0" promptText="input program name" />
-      <TextField layoutX="226.0" layoutY="53.0" prefHeight="35.0" prefWidth="161.0" promptText="input text version" />
-      <ChoiceBox layoutX="225.0" layoutY="99.0" prefHeight="35.0" prefWidth="161.0" />
-      <Button layoutX="226.0" layoutY="163.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" text="OK" />
-      <Button layoutX="313.0" layoutY="163.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" text="Cancel" />
+      <TextField fx:id="programName" layoutX="226.0" layoutY="14.0" prefHeight="35.0" prefWidth="161.0" promptText="input program name" />
+      <TextField fx:id="versionText" layoutX="226.0" layoutY="53.0" prefHeight="35.0" prefWidth="161.0" promptText="input text version" />
+      <ChoiceBox fx:id="isFree" layoutX="225.0" layoutY="99.0" prefHeight="35.0" prefWidth="161.0">
+         <items>
+            <FXCollections fx:factory="observableArrayList">
+               <Boolean fx:value="false" />
+               <Boolean fx:value="true" />
+            </FXCollections>
+         </items>
+      </ChoiceBox>
+      <Button fx:id="ok" defaultButton="true" layoutX="226.0" layoutY="163.0" mnemonicParsing="false" onAction="#setStatusOk" prefHeight="35.0" prefWidth="80.0" text="OK" />
+      <Button fx:id="cancel" cancelButton="true" layoutX="313.0" layoutY="163.0" mnemonicParsing="false" onAction="#setStatusCancel" prefHeight="35.0" prefWidth="80.0" text="Cancel" />
    </children>
 </AnchorPane>

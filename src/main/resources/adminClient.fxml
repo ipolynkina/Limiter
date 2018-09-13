@@ -11,17 +11,17 @@
    <children>
       <AnchorPane layoutX="8.0" layoutY="6.0" prefHeight="37.0" prefWidth="587.0">
          <children>
-            <TextField fx:id="txtLogin" layoutY="-1.0" prefHeight="37.0" prefWidth="149.0" promptText="Login">
+            <PasswordField fx:id="txtLogin" layoutY="-1.0" prefHeight="37.0" prefWidth="149.0" promptText="Login">
                <opaqueInsets>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </opaqueInsets>
-            </TextField>
+            </PasswordField>
             <PasswordField fx:id="txtPassword" layoutX="149.0" layoutY="-1.0" prefHeight="37.0" prefWidth="149.0" promptText="Password">
                <opaqueInsets>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </opaqueInsets>
             </PasswordField>
-            <Button fx:id="btnSend" layoutX="298.0" mnemonicParsing="false" onAction="#send" prefHeight="37.0" prefWidth="104.0" text="Send">
+            <Button fx:id="btnSend" defaultButton="true" layoutX="298.0" mnemonicParsing="false" onAction="#send" prefHeight="37.0" prefWidth="104.0" text="Send">
                <opaqueInsets>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </opaqueInsets>
@@ -35,10 +35,10 @@
          <children>
             <TableView fx:id="tblLimiter" layoutX="1.0" prefHeight="356.0" prefWidth="476.0">
               <columns>
-                  <TableColumn fx:id="nameProgram" prefWidth="152.0" text="name_program" />
-                <TableColumn fx:id="textVersion" prefWidth="150.0" text="text_version" />
+                  <TableColumn fx:id="programName" prefWidth="152.0" text="program_name" />
+                <TableColumn fx:id="versionText" prefWidth="150.0" text="version_text" />
                 <TableColumn fx:id="isFree" prefWidth="95.0" text="is_free" />
-                  <TableColumn fx:id="idVersion" prefWidth="93.0" text="id_version" />
+                  <TableColumn fx:id="versionId" prefWidth="93.0" text="version_id" />
               </columns>
                <opaqueInsets>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
