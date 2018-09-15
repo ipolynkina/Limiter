@@ -1,7 +1,8 @@
 package ru.ipolynkina.client.user;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import ru.ipolynkina.json.JSONRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,10 +11,13 @@ import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.Socket;
 
-public class UserClient {
-    public static void main(String[] args) {
+import ru.ipolynkina.json.JSONRequest;
 
-        System.out.println("UserClient start");
+public class UserClient {
+
+    private static final Logger LOGGER = LogManager.getLogger(UserClient.class.getSimpleName());
+
+    public static void main(String[] args) {
 
         try(Socket socket = new Socket("localhost", 4444)) {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -25,26 +29,25 @@ public class UserClient {
             jsonRequest.addVersion("3");
             out.println(jsonRequest);
             out.println("end");
+            LOGGER.info("out: " + jsonRequest);
 
-            String builder = "";
+            StringBuilder builder = new StringBuilder();
             String inputLine;
             while(!(inputLine = in.readLine()).equals("end")) {
-                builder = builder.concat(inputLine);
+                builder.append(inputLine);
             }
-            JSONArray array = new JSONArray(builder);
+            LOGGER.info("in: " + builder);
 
-            System.out.println("out: " + jsonRequest);
-            System.out.println("in: " + builder);
-            System.out.println("in is free: " + array.getJSONObject(0).getBoolean("isFree"));
+            JSONArray array = new JSONArray(builder.toString());
+            System.out.println(array.getJSONObject(0).getBoolean("isFree"));
 
             in.close();
             out.close();
+
         } catch(ConnectException exc) {
             System.out.println("sorry. connection error");
         } catch(IOException exc) {
             exc.printStackTrace();
         }
-
-        System.out.println("UserClient end");
     }
 }

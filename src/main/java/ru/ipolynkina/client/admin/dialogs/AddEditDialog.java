@@ -5,9 +5,11 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class AddEditDialog extends Stage {
 
-    public AddEditDialog(Stage parentStage) throws Exception {
+    public AddEditDialog(Stage parentStage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getResource("/addEditDialog.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 400, 200);
