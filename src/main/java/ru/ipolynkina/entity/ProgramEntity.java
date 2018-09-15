@@ -1,41 +1,41 @@
-package ru.ipolynkina.server.entity;
+package ru.ipolynkina.entity;
 
 public class ProgramEntity {
 
-    private int idVersion;
-    private String textVersion;
-    private String nameProgram;
+    private int versionId;
+    private String versionText;
+    private String programName;
     private boolean isFree;
 
-    public ProgramEntity(int idVersion, String textVersion, String nameProgram, boolean isFree) {
-        this.idVersion = idVersion;
-        this.textVersion = textVersion;
-        this.nameProgram = nameProgram;
+    public ProgramEntity(int versionId, String versionText, String programName, boolean isFree) {
+        this.versionId = versionId;
+        this.versionText = versionText;
+        this.programName = programName;
         this.isFree = isFree;
     }
 
-    public int getIdVersion() {
-        return idVersion;
+    public int getVersionId() {
+        return versionId;
     }
 
-    public void setIdVersion(int idVersion) {
-        this.idVersion = idVersion;
+    public void setVersionId(int versionId) {
+        this.versionId = versionId;
     }
 
-    public String getTextVersion() {
-        return textVersion;
+    public String getVersionText() {
+        return versionText;
     }
 
-    public void setTextVersion(String textVersion) {
-        this.textVersion = textVersion;
+    public void setVersionText(String versionText) {
+        this.versionText = versionText;
     }
 
-    public String getNameProgram() {
-        return nameProgram;
+    public String getProgramName() {
+        return programName;
     }
 
-    public void setNameProgram(String nameProgram) {
-        this.nameProgram = nameProgram;
+    public void setProgramName(String programName) {
+        this.programName = programName;
     }
 
     public boolean getIsFree() {
@@ -48,6 +48,6 @@ public class ProgramEntity {
 
     @Override
     public String toString() {
-        return idVersion + " " + textVersion + " " + nameProgram + " " + isFree + "\n";
+        return versionId + " " + versionText + " " + programName + " " + isFree + "\n";
     }
 }
