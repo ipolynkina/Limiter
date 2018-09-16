@@ -79,53 +79,53 @@ public class DBManager {
 
     private void createProgramTable() throws SQLException {
         executeUpdate("CREATE TABLE program(" +
-                "id_program INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1) NOT NULL," +
-                "name_program CHAR(64)," +
-                "PRIMARY KEY(id_program))");
+                "program_id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1) NOT NULL," +
+                "program_name VARCHAR(64)," +
+                "PRIMARY KEY(program_id))");
     }
 
     private void createIsFreeTable() throws SQLException {
         executeUpdate("CREATE TABLE is_free(" +
-                "id_is_free INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1) NOT NULL," +
-                "text_is_free CHAR(5)," +
-                "PRIMARY KEY(id_is_free))");
+                "is_free_id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1) NOT NULL," +
+                "is_free_text VARCHAR(5)," +
+                "PRIMARY KEY(is_free_id))");
     }
 
     private void createVersionTable() throws SQLException {
         executeUpdate("CREATE TABLE version(" +
-                "id_version INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1) NOT NULL," +
-                "text_version CHAR(16)," +
-                "id_program INTEGER," +
-                "id_is_free INTEGER," +
-                "FOREIGN KEY(id_program) REFERENCES program(id_program), " +
-                "FOREIGN KEY(id_is_free) REFERENCES is_free(id_is_free))");
+                "version_id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1) NOT NULL," +
+                "version_text VARCHAR(16)," +
+                "program_id INTEGER," +
+                "is_free_id INTEGER," +
+                "FOREIGN KEY(program_id) REFERENCES program(program_id), " +
+                "FOREIGN KEY(is_free_id) REFERENCES is_free(is_free_id))");
     }
 
     private void addDataProgram() throws SQLException {
-        executeUpdate("INSERT INTO program (name_program) VALUES('GraphsForSapHR')");
-        executeUpdate("INSERT INTO program (name_program) VALUES('PomidoroManager')");
-        executeUpdate("INSERT INTO program (name_program) VALUES('SettingsGenerator')");
-        executeUpdate("INSERT INTO program (name_program) VALUES('Converter')");
-        executeUpdate("INSERT INTO program (name_program) VALUES('Limiter')");
+        executeUpdate("INSERT INTO program (program_name) VALUES('GraphsForSapHR')");
+        executeUpdate("INSERT INTO program (program_name) VALUES('PomidoroManager')");
+        executeUpdate("INSERT INTO program (program_name) VALUES('SettingsGenerator')");
+        executeUpdate("INSERT INTO program (program_name) VALUES('Converter')");
+        executeUpdate("INSERT INTO program (program_name) VALUES('Limiter')");
     }
 
     private void addDataIsFree() throws SQLException {
-        executeUpdate("INSERT INTO is_free (text_is_free) VALUES(true)");
-        executeUpdate("INSERT INTO is_free (text_is_free) VALUES(false)");
+        executeUpdate("INSERT INTO is_free (is_free_text) VALUES(true)");
+        executeUpdate("INSERT INTO is_free (is_free_text) VALUES(false)");
     }
 
     private void addDataVersion() throws SQLException {
-        executeUpdate("INSERT INTO version (text_version, id_program, id_is_free) VALUES('1 beta', 1, 1)");
-        executeUpdate("INSERT INTO version (text_version, id_program, id_is_free) VALUES('2', 1, 1)");
-        executeUpdate("INSERT INTO version (text_version, id_program, id_is_free) VALUES('3', 1, 2)");
+        executeUpdate("INSERT INTO version (version_text, program_id, is_free_id) VALUES('1 beta', 1, 1)");
+        executeUpdate("INSERT INTO version (version_text, program_id, is_free_id) VALUES('2', 1, 1)");
+        executeUpdate("INSERT INTO version (version_text, program_id, is_free_id) VALUES('3', 1, 2)");
 
-        executeUpdate("INSERT INTO version (text_version, id_program, id_is_free) VALUES('1', 2, 1)");
-        executeUpdate("INSERT INTO version (text_version, id_program, id_is_free) VALUES('2', 2, 1)");
+        executeUpdate("INSERT INTO version (version_text, program_id, is_free_id) VALUES('1', 2, 1)");
+        executeUpdate("INSERT INTO version (version_text, program_id, is_free_id) VALUES('2', 2, 1)");
 
-        executeUpdate("INSERT INTO version (text_version, id_program, id_is_free) VALUES('1 beta', 3, 1)");
+        executeUpdate("INSERT INTO version (version_text, program_id, is_free_id) VALUES('1 beta', 3, 1)");
 
-        executeUpdate("INSERT INTO version (text_version, id_program, id_is_free) VALUES('1', 4, 2)");
+        executeUpdate("INSERT INTO version (version_text, program_id, is_free_id) VALUES('1', 4, 2)");
 
-        executeUpdate("INSERT INTO version (text_version, id_program, id_is_free) VALUES('1.0.1', 5, 2)");
+        executeUpdate("INSERT INTO version (version_text, program_id, is_free_id) VALUES('1.0.1', 5, 2)");
     }
 }
