@@ -1,87 +1,167 @@
 package ru.ipolynkina.server.db;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import ru.ipolynkina.server.entity.ProgramEntity;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
+import ru.ipolynkina.entity.ProgramEntity;
+
 public class DBController {
 
-    // TODO: logger
-    private static final Logger LOGGER = LogManager.getLogger(DBController.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("DB");
     private DBManager dbManager;
 
     public DBController(DBManager dbManager) {
         this.dbManager = dbManager;
     }
 
-    public boolean isFree(String name_program, String text_version) {
-        boolean isFree = false;
-
-        try {
-            ResultSet resultSet = dbManager.executeQuery("SELECT id_is_free FROM version, program " +
-                    "WHERE RTRIM(text_version) = '" + text_version + "' " +
-                    "AND version.id_program = program.id_program " +
-                    "AND RTRIM(program.name_program) = '" + name_program + "'");
-
-            try {
-                resultSet.next();
-                isFree = resultSet.getInt(1) == 1;
-            } catch(SQLException exc) {
-                exc.printStackTrace();
-            }
-
-            resultSet.close();
-            System.out.println(name_program + ";" + text_version + " : " + isFree);
-
-        } catch(SQLException exc) {
-            exc.printStackTrace();
-        }
-
-        return isFree;
-    }
-
-    public List<ProgramEntity> getAllProgram() {
+    public List<ProgramEntity> selectAllVersions() {
         List<ProgramEntity> programs = new ArrayList<>();
         try(ResultSet resultSet = dbManager.executeQuery("SELECT * FROM version")) {
             while(resultSet.next()) {
-                int idVersion = resultSet.getInt(1);
-                String textVersion = resultSet.getString(2);
-                int idProgram = resultSet.getInt(3);
-                String nameProgram = getNameProgram(idProgram);
-                int idIsFree = resultSet.getInt(4);
-                boolean isFree = getIsFree(idIsFree);
-                programs.add(new ProgramEntity(idVersion, textVersion, nameProgram, isFree));
+                int versionId = resultSet.getInt(1);
+                String versionText = resultSet.getString(2);
+                String programName = selectProgramName(resultSet.getInt(3));
+                boolean isFree = selectIsFreeText(resultSet.getInt(4));
+                programs.add(new ProgramEntity(versionId, versionText, programName, isFree));
             }
         } catch(SQLException exc) {
+            LOGGER.error(exc.getMessage());
             exc.printStackTrace();
         }
+
+        LOGGER.info("select all: " + programs.size());
         return programs;
     }
 
-    private String getNameProgram(int idProgram) {
-        String nameProgram = "";
-        try(ResultSet resultSet = dbManager.executeQuery("SELECT name_program FROM program " +
-                "WHERE id_program = " + idProgram )) {
-            resultSet.next();
-            nameProgram = resultSet.getString(1);
+    public ProgramEntity selectProgramByParameters(String program, String version) {
+        int versionId = 0;
+        String versionText = "";
+        String programName = "";
+        boolean isFree = false;
+
+        try(ResultSet resultSet = dbManager.executeQuery("SELECT * FROM version, program " +
+                "WHERE version_text = '" + version + "' " +
+                "AND version.program_id = program.program_id " +
+                "AND program.program_name = '" + program + "'")) {
+
+            while(resultSet.next()) {
+                versionId = resultSet.getInt(1);
+                versionText = resultSet.getString(2);
+                programName = selectProgramName(resultSet.getInt(3));
+                isFree = selectIsFreeText(resultSet.getInt(4));
+            }
         } catch(SQLException exc) {
+            LOGGER.error(exc.getMessage());
             exc.printStackTrace();
         }
-        return nameProgram;
+
+        LOGGER.info("select by parameters: " + new ProgramEntity(versionId, versionText, programName, isFree));
+        return new ProgramEntity(versionId, versionText, programName, isFree);
     }
 
-    private boolean getIsFree(int idIsFree) {
+    public void addProgramVersion(String programName, String versionText, boolean isFree) {
+        try {
+
+            if(!programNameExists(programName)) insertProgramName(programName);
+
+            ResultSet resultSet = dbManager.executeQuery(
+                    "SELECT program_id FROM program WHERE program_name = '" + programName + "'");
+            resultSet.next();
+            int programId = resultSet.getInt(1);
+            int isFreeId = isFree ? 1 : 2;
+            dbManager.executeUpdate("INSERT INTO version (version_text, program_id, is_free_id) " +
+                    "VALUES('" + versionText + "', " + programId + ", " + isFreeId + ")");
+
+            resultSet.close();
+            LOGGER.info("add: " + programName + " " + versionText + " " + isFree);
+
+        } catch(SQLException exc) {
+            LOGGER.error(exc.getMessage());
+            exc.printStackTrace();
+        }
+    }
+
+    public void editProgramVersion(int versionId, String programName, String versionText, boolean isFree) {
+        try {
+            if(!programNameExists(programName)) insertProgramName(programName);
+
+            ResultSet resultSet = dbManager.executeQuery(
+                    "SELECT program_id FROM program WHERE program_name = '" + programName + "'");
+            resultSet.next();
+            int programId = resultSet.getInt(1);
+            int isFreeId = isFree ? 1 : 2;
+            dbManager.executeUpdate("UPDATE version SET version_text = '" + versionText + "', " +
+                    "program_id = " + programId + ", " +
+                    "is_free_id = " + isFreeId + " " +
+                    "WHERE version_id = " + versionId);
+
+            resultSet.close();
+            LOGGER.info("edit: " + versionId + " " + programName + " " + versionText + " " + isFree);
+
+        } catch(SQLException exc) {
+            LOGGER.error(exc.getMessage());
+            exc.printStackTrace();
+        }
+    }
+
+    public void deleteProgramVersion(int versionId) {
+        try {
+            dbManager.executeUpdate("DELETE FROM version WHERE version_id =  " + versionId);
+            LOGGER.info("delete version_id: " + versionId);
+        } catch(SQLException exc) {
+            LOGGER.error(exc.getMessage());
+            exc.printStackTrace();
+        }
+    }
+
+    private boolean programNameExists(String programName) {
+        try(ResultSet resultSet = dbManager.executeQuery(
+                "SELECT program_id FROM program WHERE program_name = '" + programName + "'")) {
+            resultSet.next();
+            resultSet.getInt(1);
+        } catch(SQLException exc) {
+            // Ignore it. Program Name does not exist.
+            return false;
+        }
+        return true;
+    }
+
+    private void insertProgramName(String programName) {
+        try {
+            dbManager.executeUpdate("INSERT INTO program (program_name) VALUES('" + programName + "')");
+            LOGGER.info("insert program_name: " + programName);
+        } catch(SQLException exc) {
+            LOGGER.error(exc.getMessage());
+            exc.printStackTrace();
+        }
+    }
+
+    private String selectProgramName(int programId) {
+        String programName = "";
+        try(ResultSet resultSet = dbManager.executeQuery(
+                "SELECT program_name FROM program WHERE program_id = " + programId )) {
+            resultSet.next();
+            programName = resultSet.getString(1);
+        } catch(SQLException exc) {
+            LOGGER.error(exc.getMessage());
+            exc.printStackTrace();
+        }
+        return programName;
+    }
+
+    private boolean selectIsFreeText(int isFreeId) {
         boolean isFree = false;
-        try(ResultSet resultSet = dbManager.executeQuery("SELECT text_is_free FROM is_free " +
-                "WHERE id_is_free = " + idIsFree)) {
+        try(ResultSet resultSet = dbManager.executeQuery(
+                "SELECT is_free_text FROM is_free WHERE is_free_id = " + isFreeId)) {
             resultSet.next();
             isFree = resultSet.getString(1).trim().equals("true");
         } catch(SQLException exc) {
+            LOGGER.error(exc.getMessage());
             exc.printStackTrace();
         }
         return isFree;

@@ -49,7 +49,7 @@ public class AdminClientController implements Initializable {
     private PrintWriter out;
     private ObservableList<ProgramEntity> programs;
 
-    private static final Logger LOGGER = LogManager.getLogger(AdminClientController.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("AdminClient");
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

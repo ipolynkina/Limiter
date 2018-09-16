@@ -1,19 +1,25 @@
 package ru.ipolynkina.server;
 
-import ru.ipolynkina.server.db.DBController;
-import ru.ipolynkina.server.entity.ProgramEntity;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
+import ru.ipolynkina.json.JSONResponse;
+import ru.ipolynkina.server.db.DBController;
+import ru.ipolynkina.entity.ProgramEntity;
 
 public class ServerHandler implements Runnable {
 
     private Socket socket;
     private DBController dbController;
+    private static final Logger LOGGER = LogManager.getLogger("Server");
 
     public ServerHandler(Socket socket, DBController dbController) {
         this.socket = socket;
@@ -23,49 +29,85 @@ public class ServerHandler implements Runnable {
     @Override
     public void run() {
         try {
-            BufferedReader in  = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-            String line;
-            if((line = in.readLine()) != null) {
-                if(line.equals("user")) {
-                    workWithUser(out, in);
-                } else if(line.equals("admin")) {
-                    workWithAdmin(out, in);
-                }
+            StringBuilder builder = new StringBuilder();
+            String inputLine;
+             while(!(inputLine = in.readLine()).equals("end")) {
+                 builder.append(inputLine);
             }
+            LOGGER.info("in: " + builder.toString());
+
+            JSONObject request = new JSONObject(builder.toString());
+            if(request.getString("profile").equals("user")) {
+                workWithUser(request, out);
+            } else if(request.getString("profile").equals("admin") &&
+                    request.getString("password").equals("password")) {
+                if(!request.has("command")) out.println("end");
+                else workWithAdmin(request, out);
+            } else out.println("end");
 
             in.close();
             out.close();
             socket.close();
+
         } catch(IOException exc) {
+            LOGGER.error(exc.getMessage());
             exc.printStackTrace();
         }
     }
 
-    private void workWithUser(PrintWriter out, BufferedReader in) throws IOException {
-        String line;
-        out.println("input: program;version");
-        while((line = in.readLine()) != null) {
-            String[] parameters = line.split(";");
-            if(parameters.length != 2) break;
-            out.println("Server: " + dbController.isFree(parameters[0], parameters[1]));
+    private void workWithUser(JSONObject request, PrintWriter out) {
+        if(request.get("command").equals("select")) {
+            ProgramEntity entity = dbController.selectProgramByParameters(
+                    request.get("programName").toString(),
+                    request.get("versionText").toString());
+
+            JSONResponse response = new JSONResponse(entity);
+            out.println(response);
+            out.println("end");
+            LOGGER.info("out: " + response.toString());
+        } else out.println("end");
+    }
+
+    private void workWithAdmin(JSONObject request, PrintWriter out) {
+        switch(request.getString("command")) {
+            case "select all":    selectAllVersions(out);           break;
+            case "addVersion":    addProgramVersion(request);    break;
+            case "editVersion":   editProgramVersion(request);   break;
+            case "deleteVersion": deleteProgramVersion(request); break;
+            default: out.println("end");
         }
     }
 
-    private void workWithAdmin(PrintWriter out, BufferedReader in) throws IOException {
-        out.println("input: login;password");
-        String[] parameters = in.readLine().split(";");
-        if(parameters.length == 2 && parameters[0].equals("admin") && parameters[1].equals("admin")) {
-            out.println("true");
-            Iterator<ProgramEntity> iterator = dbController.getAllProgram().iterator();
-            while(iterator.hasNext()) {
-                ProgramEntity entity = iterator.next();
-                out.println(entity.getIdVersion() + ";" + entity.getTextVersion() + ";" +
-                        entity.getNameProgram() + ";" + entity.getIsFree());
-            }
-        } else {
-            out.println("false");
+    private void selectAllVersions(PrintWriter out) {
+        List<ProgramEntity> entityList = dbController.selectAllVersions();
+        try {
+            JSONResponse response = new JSONResponse(entityList.get(0));
+            for(int i = 1; i < entityList.size(); i++) response.addEntity(entityList.get(i));
+            out.println(response);
+            LOGGER.info("out: " + response);
+        } catch(IndexOutOfBoundsException exc) {
+            // Ignore it. DB is empty.
         }
+        out.println("end");
+    }
+
+    private void addProgramVersion(JSONObject request) {
+        dbController.addProgramVersion(request.getString("programName"),
+                request.getString("versionText"),
+                request.getBoolean("isFree"));
+    }
+
+    private void editProgramVersion(JSONObject request) {
+        dbController.editProgramVersion(request.getInt("versionId"),
+                request.getString("programName"),
+                request.getString("versionText"),
+                request.getBoolean("isFree"));
+    }
+
+    private void deleteProgramVersion(JSONObject request) {
+        dbController.deleteProgramVersion(request.getInt("versionId"));
     }
 }

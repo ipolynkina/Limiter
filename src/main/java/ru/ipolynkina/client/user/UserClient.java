@@ -15,9 +15,11 @@ import ru.ipolynkina.json.JSONRequest;
 
 public class UserClient {
 
-    private static final Logger LOGGER = LogManager.getLogger(UserClient.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("UserClient");
 
     public static void main(String[] args) {
+
+        LOGGER.info("user client: start");
 
         try(Socket socket = new Socket("localhost", 4444)) {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -49,5 +51,7 @@ public class UserClient {
         } catch(IOException exc) {
             exc.printStackTrace();
         }
+
+        LOGGER.info("user client: finish");
     }
 }
