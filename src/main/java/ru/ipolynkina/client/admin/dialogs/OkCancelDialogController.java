@@ -23,13 +23,13 @@ public class OkCancelDialogController implements Initializable {
     }
 
     @FXML private void setStatusOk() {
-        DialogInfo.setStatusDialog(true);
+        DialogInfo.setStatusIsOk(true);
         Stage stage = (Stage) ok.getScene().getWindow();
         stage.close();
     }
 
     @FXML private void setStatusCancel() {
-        DialogInfo.setStatusDialog(false);
+        DialogInfo.setStatusIsOk(false);
         Stage stage = (Stage) cancel.getScene().getWindow();
         stage.close();
     }

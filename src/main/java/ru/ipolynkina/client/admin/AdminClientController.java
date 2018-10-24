@@ -75,7 +75,7 @@ public class AdminClientController implements Initializable {
             DialogInfo.setDefaultInfo();
             AddEditDialog dialog = new AddEditDialog(AdminClient.getPrimaryStage());
 
-            if(DialogInfo.isSuccessful()) {
+            if(DialogInfo.getStatusIsOk()) {
                 JSONRequest request = new JSONRequest(txtLogin.getText());
                 request.addPassword(txtPassword.getText());
                 request.addCommand("addVersion");
@@ -87,11 +87,9 @@ public class AdminClientController implements Initializable {
                 LOGGER.info("out: " + request);
                 selectAndUpdateTable();
             }
-
             dialog.close();
             out.close();
             in.close();
-
         }  catch(ConnectException exc) {
             errorText.setText("sorry. connection error");
         } catch(IOException exc) {
@@ -111,7 +109,7 @@ public class AdminClientController implements Initializable {
                 DialogInfo.setProgramEntity(selectProgram);
                 AddEditDialog dialog = new AddEditDialog(AdminClient.getPrimaryStage());
                 
-                if(DialogInfo.isSuccessful()) {
+                if(DialogInfo.getStatusIsOk()) {
                     JSONRequest request = new JSONRequest(txtLogin.getText());
                     request.addPassword(txtPassword.getText());
                     request.addCommand("editVersion");
@@ -124,11 +122,10 @@ public class AdminClientController implements Initializable {
                     LOGGER.info("out: " + request);
                     selectAndUpdateTable();
                 }
-
                 dialog.close();
-                out.close();
-                in.close();
             }
+            out.close();
+            in.close();
         } catch(ConnectException exc) {
             errorText.setText("sorry. connection error");
         } catch(IOException exc) {
@@ -148,7 +145,7 @@ public class AdminClientController implements Initializable {
                 DialogInfo.setProgramEntity(selectProgram);
                 OkCancelDialog dialog = new OkCancelDialog(AdminClient.getPrimaryStage());
 
-                if(DialogInfo.isSuccessful()) {
+                if(DialogInfo.getStatusIsOk()) {
                     JSONRequest request = new JSONRequest(txtLogin.getText());
                     request.addPassword(txtPassword.getText());
                     request.addCommand("deleteVersion");
@@ -158,11 +155,10 @@ public class AdminClientController implements Initializable {
                     LOGGER.info("out: " + request);
                     selectAndUpdateTable();
                 }
-
                 dialog.close();
-                out.close();
-                in.close();
             }
+            out.close();
+            in.close();
         } catch(ConnectException exc) {
             errorText.setText("sorry. connection error");
         } catch(IOException exc) {
@@ -175,14 +171,6 @@ public class AdminClientController implements Initializable {
     @FXML private void selectAndUpdateTable() {
         selectAllVersions();
         updateTable();
-    }
-
-    private void setButtonVisibility(boolean isVisible) {
-        btnAdd.setVisible(isVisible);
-        btnEdit.setVisible(isVisible);
-        btnDelete.setVisible(isVisible);
-        btnUpdate.setVisible(isVisible);
-        tblLimiter.setVisible(isVisible);
     }
 
     private void selectAllVersions() {
@@ -231,5 +219,13 @@ public class AdminClientController implements Initializable {
         programName.setCellValueFactory(new PropertyValueFactory<>("programName"));
         isFree.setCellValueFactory(new PropertyValueFactory<>("isFree"));
         tblLimiter.setItems(programs);
+    }
+
+    private void setButtonVisibility(boolean isVisible) {
+        btnAdd.setVisible(isVisible);
+        btnEdit.setVisible(isVisible);
+        btnDelete.setVisible(isVisible);
+        btnUpdate.setVisible(isVisible);
+        tblLimiter.setVisible(isVisible);
     }
 }

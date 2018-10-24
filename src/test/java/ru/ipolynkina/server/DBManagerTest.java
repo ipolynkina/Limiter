@@ -15,7 +15,7 @@ public class DBManagerTest {
 
     @BeforeClass
     public static void init() {
-        dbManager = new DBManager("limiter");
+        dbManager = new DBManager("limiter2");
     }
 
     @Test
@@ -61,10 +61,10 @@ public class DBManagerTest {
 
     @Test
     public void testDataVersionValue() {
-        try (ResultSet resultSet = dbManager.executeQuery("SELECT * FROM version WHERE id_program = 5")) {
+        try (ResultSet resultSet = dbManager.executeQuery("SELECT * FROM version WHERE program_id = 5")) {
             while(resultSet.next()) {
                 Assert.assertEquals(resultSet.getInt(1), 8);
-                Assert.assertEquals(resultSet.getString(2).trim(), "1.0.1");
+                Assert.assertEquals(resultSet.getString(2), "1.0.1");
                 Assert.assertEquals(resultSet.getInt(3), 5);
                 Assert.assertEquals(resultSet.getInt(4), 2);
             }

@@ -27,7 +27,7 @@ public class AddEditDialogController implements Initializable {
 
     @FXML private void setStatusOk() {
         if(!programName.getText().equals("") && !versionText.getText().equals("")) {
-            DialogInfo.setStatusDialog(true);
+            DialogInfo.setStatusIsOk(true);
             DialogInfo.getProgramEntity().setProgramName(programName.getText());
             DialogInfo.getProgramEntity().setVersionText(versionText.getText());
             DialogInfo.getProgramEntity().setIsFree(isFree.getValue());
@@ -37,7 +37,7 @@ public class AddEditDialogController implements Initializable {
     }
 
     @FXML private void setStatusCancel() {
-        DialogInfo.setStatusDialog(false);
+        DialogInfo.setStatusIsOk(false);
         Stage stage = (Stage) cancel.getScene().getWindow();
         stage.close();
     }

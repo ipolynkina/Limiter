@@ -4,29 +4,29 @@ import ru.ipolynkina.entity.ProgramEntity;
 
 public class DialogInfo {
 
-    private static boolean  successfulDialog;
+    private static boolean statusIsOk;
     private static ProgramEntity programEntity;
 
     public DialogInfo() {
-        successfulDialog = false;
+        statusIsOk = false;
         programEntity = new ProgramEntity(0, "", "", false);
     }
 
     public static void setDefaultInfo() {
-        successfulDialog = false;
+        statusIsOk = false;
         programEntity = new ProgramEntity(0, "", "", false);
     }
 
-    public static void setStatusDialog(boolean statusDialog) {
-        successfulDialog = statusDialog;
+    public static void setStatusIsOk(boolean statusIsOk) {
+        DialogInfo.statusIsOk = statusIsOk;
     }
 
     public static void setProgramEntity(ProgramEntity entity) {
         programEntity = entity;
     }
 
-    public static boolean isSuccessful() {
-        return successfulDialog;
+    public static boolean getStatusIsOk() {
+        return statusIsOk;
     }
 
     public static ProgramEntity getProgramEntity() {

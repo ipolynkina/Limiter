@@ -52,6 +52,8 @@ public class ServerHandler implements Runnable {
             out.close();
             socket.close();
 
+        } catch(NullPointerException exc) {
+            // Request is empty. Ignore it.
         } catch(IOException exc) {
             LOGGER.error(exc.getMessage());
             exc.printStackTrace();
@@ -73,7 +75,7 @@ public class ServerHandler implements Runnable {
 
     private void workWithAdmin(JSONObject request, PrintWriter out) {
         switch(request.getString("command")) {
-            case "select all":    selectAllVersions(out);           break;
+            case "select all":    selectAllVersions(out);        break;
             case "addVersion":    addProgramVersion(request);    break;
             case "editVersion":   editProgramVersion(request);   break;
             case "deleteVersion": deleteProgramVersion(request); break;
@@ -84,10 +86,14 @@ public class ServerHandler implements Runnable {
     private void selectAllVersions(PrintWriter out) {
         List<ProgramEntity> entityList = dbController.selectAllVersions();
         try {
-            JSONResponse response = new JSONResponse(entityList.get(0));
-            for(int i = 1; i < entityList.size(); i++) response.addEntity(entityList.get(i));
-            out.println(response);
-            LOGGER.info("out: " + response);
+            if(!entityList.isEmpty()) {
+                JSONResponse response = new JSONResponse(entityList.get(0));
+                for(int i = 1; i < entityList.size(); i++) {
+                    response.addEntity(entityList.get(i));
+                }
+                out.println(response);
+                LOGGER.info("out: " + response);
+            } else out.println("end");
         } catch(IndexOutOfBoundsException exc) {
             // Ignore it. DB is empty.
         }
